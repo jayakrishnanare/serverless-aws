@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch serverless",
+            "program": "${workspaceFolder}/node_modules/serverless/bin/serverless",
+            "request": "launch",
+            "type": "node",
+            "args": ["offline", "start", "--httpPort", "4000", "--noTimeout"],
+            "env": {
+                "tableName": "firstTable-01",
+                "bucketName": "sample-bucket-9100",
+                "imageUploadBucket": "my-image-upload-bucket-demo",
+                "region": "us-east-1"
+            }
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+getUser:
+  handler: lambdas/endpoints/getUser.handler
+  events:
+    - http:
+          path: get-user/{ID}
+          method: GET
+          cors: true
+          private: true
+getPlayerScore:
+  handler: lambdas/endpoints/getPlayerScore.handler
+  events:
+    - http: 
+          path: get-player-score/{ID}
+          method: GET
+          cors: true
+createPlayerScore:
+  handler: lambdas/endpoints/createPlayerScore.handler
+  events:
+    - http: 
+          path: create-player-score/{ID}
+          method: POST 
+          cors: true
+updatePlayerScore:
+  handler: lambdas/endpoints/updatePlayerScore.handler
+  events:
+    - http: 
+          path: update-player-score/{ID}
+          method: PUT 
+          cors: true  
+getGameScores:
+  handler: lambdas/endpoints/getGameScores.handler
+  events:
+    - http: 
+          path: getgame-score/{game}
+          method: GET
+          cors: true
+createFile:
+  handler: lambdas/endpoints/createFile.handler
+  events:
+    - http:
+          path: create-file/{fileName}
+          method: POST
+          cors: true
+getFile:
+  handler: lambdas/endpoints/getFile.handler
+  events:
+    - http: 
+          path: get-file/{fileName}
+          method: GET
+          cors: true
+sendEmail:
+  handler: lambdas/endpoints/sendEmail.handler
+  events:
+    - http:
+          path: send-email
+          method: POST
+          cors: true  
+sendSMS:
+  handler: lambdas/endpoints/sendSMS.handler
+  events:
+    - http: 
+          path: send-sms
+          method: POST
+          cors: true
+analyse:
+  handler: lambdas/endpoints/analyse.handler
+  events:
+    - http: 
+          path: analysetext
+          method: POST
+          cors: true
+sendRemainderEmial:
+  handler: lambdas/scheduleTasks/remainderEmail.handler
+  events:
+    - schedule: cron(35 13 ? * 5 *)
+imageUpload: 
+  handler: lambdas/endpoints/imageUpload.handler
+  events:
+    - http: 
+          path: upload-image
+          method: POST
+          cors: true

@@ -1,0 +1,297 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: aws-serverless-01
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  profile: serverlessuser
+  region: us-east-1
+  stage: dev
+  environment:
+      tableName: ${self:custom.tableName}
+      bucketName: ${self:custom.bucketName}
+      imageUploadBucket: ${self:custom.imageUploadBucket}
+      region: ${self:provider.region}
+  iamRoleStatements:
+        - Effect: Allow
+          Action:
+              - dynamodb:*
+              - s3:*
+              - ses:*
+              - sns:setSMSAttributes
+              - sns:publish
+              - comprehend:*
+          Resource: '*'
+          
+  apiGateway: #it is used for craeting the api key for endpoint who can access 
+    apiKeySourceType: HEADER
+    apiKeys: 
+        - free-api-key
+    usagePlan:
+      quota:
+        limit: 10
+        period: MONTH
+      throttle:
+        burstLimit: 2
+        rateLimit: 1
+  #     - free:
+  #         - freeApiKey
+  #     - paid: 
+  #         - paidApiKey
+  #   usagePlan:
+  #     free:
+  #       quota:
+  #         limit: 10
+  #         period: MONTH
+  #       throttle: 
+  #         burstLimit: 2
+  #         rateLimit: 1
+  #     paid:
+  #       quota: 
+  #         limit: 1000
+  #         period: MONTH
+  #       throttle:
+  #         burstLimit: 20
+  #         rateLimit: 10        
+          
+            
+plugins:
+  - serverless-s3-sync
+  - serverless-webpack
+  - serverless-plugin-split-stacks
+package: 
+    individually: true
+custom:
+  bucketName: sapmle-bucket-9100
+  tableName: firstTable-01
+  imageUploadBucket: my-image-upload-bucket-demo
+  s3Sync:
+    - bucketName: ${self:custom.bucketName}
+      localDir: uploadData
+  splitStacks:
+    nestedStackCount: 5
+    perFunction: false
+    perType: false
+    perGroupFunction: false
+
+# plugins:
+#     - serverless-s3-sync
+
+# custom:
+#   s3Sync:
+#     - BucketName: sapmle-bucket-9100
+#       localDir: uploadData
+
+
+# you can overwrite defaults here
+#  stage: dev
+#  region: us-east-1
+
+# you can add statements to the Lambda function's IAM Role here
+#  iam:
+#    role:
+#      statements:
+#        - Effect: "Allow"
+#          Action:
+#            - "s3:ListBucket"
+#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+#        - Effect: "Allow"
+#          Action:
+#            - "s3:PutObject"
+#          Resource:
+#            Fn::Join:
+#              - ""
+#              - - "arn:aws:s3:::"
+#                - "Ref" : "ServerlessDeploymentBucket"
+#                - "/*"
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+# you can add packaging information here
+#package:
+#  patterns:
+#    - '!exclude-me.js'
+#    - '!exclude-me-dir/**'
+#    - include-me.js
+#    - include-me-dir/**
+
+
+functions: ${file(yml/functions.yml)}
+  # getUser:
+  #   handler: lambdas/endpoints/getUser.handler
+  #   events:
+  #     - http:
+  #           path: get-user/{ID}
+  #           method: GET
+  #           cors: true
+  #           private: true
+  # getPlayerScore:
+  #   handler: lambdas/endpoints/getPlayerScore.handler
+  #   events:
+  #     - http: 
+  #           path: get-player-score/{ID}
+  #           method: GET
+  #           cors: true
+  # createPlayerScore:
+  #   handler: lambdas/endpoints/createPlayerScore.handler
+  #   events:
+  #     - http: 
+  #           path: create-player-score/{ID}
+  #           method: POST 
+  #           cors: true
+  # updatePlayerScore:
+  #   handler: lambdas/endpoints/updatePlayerScore.handler
+  #   events:
+  #     - http: 
+  #           path: update-player-score/{ID}
+  #           method: PUT 
+  #           cors: true  
+  # getGameScores:
+  #   handler: lambdas/endpoints/getGameScores.handler
+  #   events:
+  #     - http: 
+  #           path: getgame-score/{game}
+  #           method: GET
+  #           cors: true
+  # createFile:
+  #   handler: lambdas/endpoints/createFile.handler
+  #   events:
+  #     - http:
+  #           path: create-file/{fileName}
+  #           method: POST
+  #           cors: true
+  # getFile:
+  #   handler: lambdas/endpoints/getFile.handler
+  #   events:
+  #     - http: 
+  #           path: get-file/{fileName}
+  #           method: GET
+  #           cors: true
+  # sendEmail:
+  #   handler: lambdas/endpoints/sendEmail.handler
+  #   events:
+  #     - http:
+  #           path: send-email
+  #           method: POST
+  #           cors: true  
+  # sendSMS:
+  #   handler: lambdas/endpoints/sendSMS.handler
+  #   events:
+  #     - http: 
+  #           path: send-sms
+  #           method: POST
+  #           cors: true
+  # analyse:
+  #   handler: lambdas/endpoints/analyse.handler
+  #   events:
+  #     - http: 
+  #           path: analysetext
+  #           method: POST
+  #           cors: true
+  # sendRemainderEmial:
+  #   handler: lambdas/scheduleTasks/remainderEmail.handler
+  #   events:
+  #     - schedule: cron(35 13 ? * 5 *)
+  # imageUpload: 
+  #   handler: lambdas/endpoints/imageUpload.handler
+  #   events:
+  #     - http: 
+  #           path: upload-image
+  #           method: POST
+  #           cors: true
+
+
+# you can add CloudFormation resource templates here
+resources:
+  - ${file(yml/s3.yml)}
+  - ${file(yml/dynamo.yml)}
+  - ${file(yml/assumeRole.yml)}
+  - ${file(yml/cognitoUserPool.yml)}
+  - ${file(yml/cognioUserPoolClient.yml)}
+    # NewResource:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: sapmle-bucket-9100
+    # ImageUploadBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: my-image-upload-bucket-demo
+    # MyDynamoDbTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     TableName: ${self:custom.tableName}
+    #     AttributeDefinitions:
+    #       - AttributeName: ID
+    #         AttributeType: S
+    #       - AttributeName: game
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: ID
+    #         KeyType: HASH
+    #     BillingMode: PAY_PER_REQUEST
+
+    #     GlobalSecondaryIndexes:
+    #       - IndexName: game-index
+    #         KeySchema: 
+    #           - AttributeName: game
+    #             KeyType: HASH
+    #         Projection:
+    #           ProjectionType: ALL
+              
+    # myAssumeRole: 
+    #   Type: AWS::IAM::Role
+    #   Properties: 
+    #     RoleName: myAssumeRole
+    #     AssumeRolePolicyDocument:
+    #       Version: '2012-10-17'
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal:
+    #             Service:
+    #               - lambda.amazonaws.com
+    #               - apigateway.amazonaws.com
+    #           Action: 
+    #             - sts:AssumeRole
+        # cognito User pool
+    # CognitoUserPool:
+    #   Type: AWS::Cognito::UserPool
+    #   Properties:
+    #     UserPoolName: ${self:provider.stage}-user-pool
+    #     UsernameAttributes:
+    #       - email
+    #     AutoVerifiedAttributes:
+    #       - email
+    # CognitoUserPoolClient:
+    #   Type: AWS::Cognito::UserPoolClient
+    #   Properties:
+    #     ClientName: ${self:provider.stage}-user-pool-client
+    #     UserPoolId:
+    #       Ref: CognitoUserPool
+    #     ExplicitAuthFlows:
+    #       - ADMIN_NO_SRP_AUTH
+    #     GenerateSecret: false
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"

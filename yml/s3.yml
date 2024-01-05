@@ -1,0 +1,9 @@
+Resources:
+  NewResource:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: sapmle-bucket-9100
+  ImageUploadBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-image-upload-bucket-demo
