@@ -1,2 +1,2 @@
 const abd =  56 
-abcd
+abcd = 726
